@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import './styles/Cats.css'
 import heart from './assets/heart.svg'
 import Cat from "./interfaces/cat.interface"
-import { backendURL, catAPIUrl } from "./url"
+import { catAPIUrl } from "./url"
 import NewCat from "./interfaces/newCat.interface"
 import clickedHeart from './assets/clicked-heart.svg'
 import hoveredHeart from './assets/hovered-heart.svg'
+import generateCatName from "./utils/generateCatName"
+import CatName from "./interfaces/catName.interface"
 
 export default function Cats() {
   const [cats, setCats] = useState<NewCat[]>([])
   const [isHover, setIsHover] = useState(false)
+  const [catNames, setCatNames] = useState<CatName>({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,7 +22,12 @@ export default function Cats() {
         const fetchedCats: Cat[] = await response.json()
   
         const newCats: NewCat[] = fetchedCats.map((cat) => {
-          const newCat = {...cat, isLiked: false}
+          const newCat = {
+            ...cat,
+            name: generateCatName(), 
+            isEdit: false,
+            isLiked: false
+          }
 
           return newCat
         })
@@ -32,48 +40,60 @@ export default function Cats() {
 
     fetchData()
   }, [])
-
-  const handleClick = async (catId: string) => {
-    const cat = cats.find(cat => cat.id === catId)
-    
-    if (!cat?.isLiked) {
-      try {
-        const response = await fetch(`${backendURL}/likes`, {
-          method: 'POST',
-          body: JSON.stringify({cat_id: catId}),
-          headers: {"Content-Type": "application/json"}
-        })
   
-        if (!response.ok) return
+  const handleEdit = (catId: string) => {
+    const newCats = cats.map(cat => 
+        cat.id !== catId ?
+        cat :
+        { ...cat, isEdit: true }
+    );
 
-        changeLike(catId)
+    setCats(newCats);
 
-      } catch (error) {
-        console.error(error)
-      }
-    } else {
-      try {
-        const response = await fetch(`${backendURL}/likes/${catId}`, {method: 'DELETE'})
-        
-        if (!response.ok) return
+};
 
-        changeLike(catId)
-      } catch (error) {
-        console.error(error);
-      }      
-    }
-  }
+  const handleNameClick = (catId: string) => {
+    const name = catNames[catId] 
 
-  const changeLike = (catId: string) => {
-    const changedCats = cats.map(cat => {
-      if (cat.id === catId) {
-        return {...cat, isLiked: !cat.isLiked}
-      }
+    const newCats = cats.map(cat => 
+        cat.id !== catId ?
+        cat :
+        { ...cat, name, isEdit: false }
+    );
 
-      return cat
-    })
+    setCats(newCats);
+  };
 
-    setCats(changedCats)
+  const handleNameEnter = (e: React.KeyboardEvent<HTMLInputElement>, catId: string) => {
+    if (e.key !== 'Enter') return
+
+    const name = catNames[catId] 
+
+    const newCats = cats.map(cat => 
+        cat.id !== catId ?
+        cat :
+        { ...cat, name, isEdit: false }
+    );
+
+    setCats(newCats);
+  };
+
+  const changeName = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    catId: string 
+  ) => {
+    let name = e.target.value
+    
+    const newCatNames: CatName = {...catNames, [catId]: name}
+
+    setCatNames(newCatNames)
+  };
+
+
+  const handleDelete = (catId: string) => {
+    const newCats = cats.filter(cat => cat.id !== catId)
+
+    setCats(newCats)
   }
 
   return (
@@ -88,7 +108,6 @@ export default function Cats() {
               <div 
                 className="cat-container" 
                 key={cat.id} 
-                onClick={() => handleClick(cat.id)}
               >
                 <img src={url} alt="cat" className="cat-image"/>
                 <img 
@@ -98,6 +117,25 @@ export default function Cats() {
                   onMouseOver={() => setIsHover(true)}
                   onMouseOut={() => setIsHover(false)}
                 />
+                {
+                  cat.isEdit ?
+                  <div style={{display: "flex"}}>
+                    <input 
+                      type="text" 
+                      onKeyDown={(e) => handleNameEnter(e, cat.id)}
+                      onChange={(e) => changeName(e, cat.id)}
+                      value={catNames[cat.id] || ''}
+                    />
+                    <button onClick={() => handleNameClick(cat.id)}>Поменять</button>
+                  </div> :
+                  <>
+                    <p>{cat.name}</p>
+                    <div className="cat-container-bottom">
+                      <button onClick={() => handleEdit(cat.id)}>Поменять кличку</button>
+                      <button onClick={() => handleDelete(cat.id)}>Удалить</button>
+                    </div>
+                  </>
+                }
               </div>
             )
           })
