@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react"
 import './styles/Cats.css'
-import heart from './assets/heart.svg'
-import Cat from "./interfaces/cat.interface"
-import { catAPIUrl } from "./url"
-import NewCat from "./interfaces/newCat.interface"
-import clickedHeart from './assets/clicked-heart.svg'
-import hoveredHeart from './assets/hovered-heart.svg'
+import Cat from "./interfaces/Cat.interface"
+import { catAPIUrl } from "./utils/url"
+import NewCat from "./interfaces/NewCat.interface"
 import generateCatName from "./utils/generateCatName"
-import CatName from "./interfaces/catName.interface"
+import CatName from "./interfaces/CatName.interface"
 
 export default function Cats() {
   const [cats, setCats] = useState<NewCat[]>([])
-  const [isHover, setIsHover] = useState(false)
   const [catNames, setCatNames] = useState<CatName>({})
 
   useEffect(() => {
@@ -102,21 +98,12 @@ export default function Cats() {
         {
           cats.map((cat) => {
             const {url} = cat
-            let src = isHover ? hoveredHeart : (cat.isLiked ? clickedHeart : heart) 
-
             return(
               <div 
                 className="cat-container" 
                 key={cat.id} 
               >
                 <img src={url} alt="cat" className="cat-image"/>
-                <img 
-                  src={src} 
-                  alt="heart" 
-                  className="heart-image"
-                  onMouseOver={() => setIsHover(true)}
-                  onMouseOut={() => setIsHover(false)}
-                />
                 {
                   cat.isEdit ?
                   <div style={{display: "flex"}}>
