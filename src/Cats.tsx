@@ -8,15 +8,46 @@ import CatName from "./interfaces/CatName.interface"
 
 export default function Cats() {
   const [cats, setCats] = useState<NewCat[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [fetching, setFetching] = useState(true)
   const [catNames, setCatNames] = useState<CatName>({})
+  const [totalCount, setTotalCount] = useState(0)
 
   useEffect(() => {
+    document.addEventListener('scroll', scrollHandler)
+
+
+    return () => {
+      document.removeEventListener('scroll', scrollHandler)
+    }
+  })
+
+  const scrollHandler = (e: Event) => {
+    const target = e.target as Document
+
+    const {scrollHeight, scrollTop} = target.documentElement
+    const {innerHeight} = window
+
+    if (
+      scrollHeight - (scrollTop + innerHeight) < 100 &&
+      cats.length < totalCount
+    ) setFetching(true) 
+   }
+
+  useEffect(() => {
+    if (!fetching) return
+    
     const fetchData = async () => {
       try {
-        const response = await fetch(`${catAPIUrl}/search?limit=10`)
-  
+
+        const response = await fetch(`
+          ${catAPIUrl}/search?limit=10&page=${currentPage}  
+        `)
+
+        
+        
         const fetchedCats: Cat[] = await response.json()
-  
+        
         const newCats: NewCat[] = fetchedCats.map((cat) => {
           const newCat = {
             ...cat,
@@ -24,18 +55,25 @@ export default function Cats() {
             isEdit: false,
             isLiked: false
           }
-
+          
           return newCat
         })
-
-        setCats(newCats)        
+        
+        setCats([...cats, ...newCats])        
+        setCurrentPage(c => c + 1)
+        const paginationCount = Number(response.headers.get('Pagination-Count'))
+        console.log(response.headers.get('Pagination-Count'))
+        console.log(response.headers.forEach(header => console.log(header)))
+        paginationCount && setTotalCount(paginationCount)
       } catch (error) {
         console.error(error)
+      } finally {
+        setFetching(false)
       }
     }
 
     fetchData()
-  }, [])
+  }, [fetching])
   
   const handleEdit = (catId: string) => {
     const newCats = cats.map(cat => 
