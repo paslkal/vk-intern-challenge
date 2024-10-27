@@ -4,15 +4,16 @@ import Cat from "./interfaces/Cat.interface"
 import { catAPIUrl } from "./utils/url"
 import NewCat from "./interfaces/NewCat.interface"
 import generateCatName from "./utils/generateCatName"
-import CatName from "./interfaces/CatName.interface"
+import CatNames from "./interfaces/CatNames.interface"
 
 export default function Cats() {
   const [cats, setCats] = useState<NewCat[]>([])
+  const [catNames, setCatNames] = useState<CatNames>({})
+  const [loadedCats, setLoadedCats] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [fetching, setFetching] = useState(true)
-  const [catNames, setCatNames] = useState<CatName>({})
-  const [totalCount, setTotalCount] = useState(0)
-
+  const [totalCount, setTotalCount] = useState(1000)
+  
   useEffect(() => {
     document.addEventListener('scroll', scrollHandler)
 
@@ -30,8 +31,11 @@ export default function Cats() {
 
     if (
       scrollHeight - (scrollTop + innerHeight) < 100 &&
-      cats.length < totalCount
-    ) setFetching(true) 
+      cats.length < totalCount &&
+      loadedCats.length -9 <= cats.length
+    ) {
+      setFetching(true)
+    } 
    }
 
   useEffect(() => {
@@ -62,8 +66,6 @@ export default function Cats() {
         setCats([...cats, ...newCats])        
         setCurrentPage(c => c + 1)
         const paginationCount = Number(response.headers.get('Pagination-Count'))
-        console.log(response.headers.get('Pagination-Count'))
-        console.log(response.headers.forEach(header => console.log(header)))
         paginationCount && setTotalCount(paginationCount)
       } catch (error) {
         console.error(error)
@@ -118,7 +120,7 @@ export default function Cats() {
   ) => {
     let name = e.target.value
     
-    const newCatNames: CatName = {...catNames, [catId]: name}
+    const newCatNames: CatNames = {...catNames, [catId]: name}
 
     setCatNames(newCatNames)
   };
@@ -141,7 +143,13 @@ export default function Cats() {
                 className="cat-container" 
                 key={cat.id} 
               >
-                <img src={url} alt="cat" className="cat-image"/>
+                <img 
+                  src={url} 
+                  alt="cat" 
+                  className="cat-image"
+                  onLoad={() => setLoadedCats([...loadedCats, cat.id])}
+                  
+                />
                 {
                   cat.isEdit ?
                   <div style={{display: "flex"}}>
