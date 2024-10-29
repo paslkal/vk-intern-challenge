@@ -1,5 +1,5 @@
-import Header from "./Header"
-import Cats from "./Cats"
+import Header from "./components/Header/Header"
+import Cats from "./components/Cats/Cats"
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom"
 
 function App() {

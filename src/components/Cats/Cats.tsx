@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
-import './styles/Cats.css'
-import FetchedCat from "./interfaces/FetchedCat.interface"
-import { catAPIUrl } from "./utils/url"
-import NewCat from "./interfaces/NewCat.interface"
-import generateCatName from "./utils/generateCatName"
+import './Cats.css'
+import FetchedCat from "../../interfaces/FetchedCat.interface"
+import { catAPIUrl } from "../../utils/url"
+import NewCat from "../../interfaces/NewCat.interface"
+import generateCatName from "../../utils/generateCatName"
 import { useInView } from "react-intersection-observer"
-import Cat from "./Cat"
-import catsStore from "./store/CatsStore"
+import Cat from "../Cat/Cat"
+import catsStore from "../../store/CatsStore"
 import { observer } from "mobx-react-lite"
 
 const Cats = observer(() => {

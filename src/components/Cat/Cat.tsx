@@ -1,7 +1,7 @@
-import NewCat from "./interfaces/NewCat.interface"
+import NewCat from "../../interfaces/NewCat.interface"
 import { useInView } from "react-intersection-observer"
-import catsStore from "./store/CatsStore"
-import catNamesStore from "./store/CatNamesStore"
+import catsStore from "../../store/CatsStore"
+import catNamesStore from "../../store/CatNamesStore"
 import { observer } from "mobx-react-lite"
 
 const Cat = observer(({cat} : {cat: NewCat}) => {
