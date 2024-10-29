@@ -1,42 +1,25 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import './styles/Cats.css'
-import Cat from "./interfaces/Cat.interface"
+import FetchedCat from "./interfaces/FetchedCat.interface"
 import { catAPIUrl } from "./utils/url"
 import NewCat from "./interfaces/NewCat.interface"
 import generateCatName from "./utils/generateCatName"
-import CatNames from "./interfaces/CatNames.interface"
+import { useInView } from "react-intersection-observer"
+import Cat from "./Cat"
+import catsStore from "./store/CatsStore"
+import { observer } from "mobx-react-lite"
 
-export default function Cats() {
-  const [cats, setCats] = useState<NewCat[]>([])
-  const [catNames, setCatNames] = useState<CatNames>({})
-  const [loadedCats, setLoadedCats] = useState<string[]>([])
+const Cats = observer(() => {
   const [currentPage, setCurrentPage] = useState(1)
   const [fetching, setFetching] = useState(true)
-  const [totalCount, setTotalCount] = useState(1000)
-  
-  useEffect(() => {
-    document.addEventListener('scroll', scrollHandler)
-
-
-    return () => {
-      document.removeEventListener('scroll', scrollHandler)
-    }
+  // const [totalCount, setTotalCount] = useState(1000)
+  const {ref, inView} = useInView({
+    threshold: 0.5
   })
 
-  const scrollHandler = (e: Event) => {
-    const target = e.target as Document
-
-    const {scrollHeight, scrollTop} = target.documentElement
-    const {innerHeight} = window
-
-    if (
-      scrollHeight - (scrollTop + innerHeight) < 100 &&
-      cats.length < totalCount &&
-      loadedCats.length -9 <= cats.length
-    ) {
-      setFetching(true)
-    } 
-   }
+  useEffect(() => {
+    if (inView) setFetching(true)
+  }, [inView])
 
   useEffect(() => {
     if (!fetching) return
@@ -47,10 +30,8 @@ export default function Cats() {
         const response = await fetch(`
           ${catAPIUrl}/search?limit=10&page=${currentPage}  
         `)
-
         
-        
-        const fetchedCats: Cat[] = await response.json()
+        const fetchedCats: FetchedCat[] = await response.json()
         
         const newCats: NewCat[] = fetchedCats.map((cat) => {
           const newCat = {
@@ -62,11 +43,10 @@ export default function Cats() {
           
           return newCat
         })
-        
-        setCats([...cats, ...newCats])        
+        catsStore.addCats(newCats)        
         setCurrentPage(c => c + 1)
-        const paginationCount = Number(response.headers.get('Pagination-Count'))
-        paginationCount && setTotalCount(paginationCount)
+        // const paginationCount = Number(response.headers.get('Pagination-Count'))
+        // paginationCount && setTotalCount(paginationCount)
       } catch (error) {
         console.error(error)
       } finally {
@@ -77,103 +57,19 @@ export default function Cats() {
     fetchData()
   }, [fetching])
   
-  const handleEdit = (catId: string) => {
-    const newCats = cats.map(cat => 
-        cat.id !== catId ?
-        cat :
-        { ...cat, isEdit: true }
-    );
-
-    setCats(newCats);
-
-};
-
-  const handleNameClick = (catId: string) => {
-    const name = catNames[catId] 
-
-    const newCats = cats.map(cat => 
-        cat.id !== catId ?
-        cat :
-        { ...cat, name, isEdit: false }
-    );
-
-    setCats(newCats);
-  };
-
-  const handleNameEnter = (e: React.KeyboardEvent<HTMLInputElement>, catId: string) => {
-    if (e.key !== 'Enter') return
-
-    const name = catNames[catId] 
-
-    const newCats = cats.map(cat => 
-        cat.id !== catId ?
-        cat :
-        { ...cat, name, isEdit: false }
-    );
-
-    setCats(newCats);
-  };
-
-  const changeName = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    catId: string 
-  ) => {
-    let name = e.target.value
-    
-    const newCatNames: CatNames = {...catNames, [catId]: name}
-
-    setCatNames(newCatNames)
-  };
-
-
-  const handleDelete = (catId: string) => {
-    const newCats = cats.filter(cat => cat.id !== catId)
-
-    setCats(newCats)
-  }
-
   return (
     <main>
       <div className="cats-grid">
         {
-          cats.map((cat) => {
-            const {url} = cat
-            return(
-              <div 
-                className="cat-container" 
-                key={cat.id} 
-              >
-                <img 
-                  src={url} 
-                  alt="cat" 
-                  className="cat-image"
-                  onLoad={() => setLoadedCats([...loadedCats, cat.id])}
-                  
-                />
-                {
-                  cat.isEdit ?
-                  <div style={{display: "flex"}}>
-                    <input 
-                      type="text" 
-                      onKeyDown={(e) => handleNameEnter(e, cat.id)}
-                      onChange={(e) => changeName(e, cat.id)}
-                      value={catNames[cat.id] || ''}
-                    />
-                    <button onClick={() => handleNameClick(cat.id)}>Поменять</button>
-                  </div> :
-                  <>
-                    <p>{cat.name}</p>
-                    <div className="cat-container-bottom">
-                      <button onClick={() => handleEdit(cat.id)}>Поменять кличку</button>
-                      <button onClick={() => handleDelete(cat.id)}>Удалить</button>
-                    </div>
-                  </>
-                }
-              </div>
-            )
-          })
+          catsStore.cats.map((cat, index) => 
+            catsStore.cats.length === index + 1 ? 
+            <div ref={ref}><Cat cat={cat}/></div> :
+            <Cat cat={cat}/>
+          )
         }
       </div>
     </main>
   )
-}
+})
+
+export default Cats
