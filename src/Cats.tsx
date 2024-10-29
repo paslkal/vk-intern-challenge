@@ -14,7 +14,7 @@ const Cats = observer(() => {
   const [fetching, setFetching] = useState(true)
   // const [totalCount, setTotalCount] = useState(1000)
   const {ref, inView} = useInView({
-    threshold: 0.5
+    threshold: 0
   })
 
   useEffect(() => {
