@@ -1,9 +1,27 @@
 export default function generateCatName() {
-  const prefixes = ["Мяу", "Бар", "Кос", "Пуш", "Си", "Кот", "Сне", "Лап"];
-  const suffixes = ["ся", "ик", "ка", "чок", "чик", "уся", "шок", "чка"];
+  const names = [
+    "Мурзик",
+    "Симба",
+    "Люси",
+    "Барсик",
+    "Том",
+    "Котя",
+    "Оливия",
+    "Чарли",
+    "Снежок",
+    "Милка",
+    "Тигра",
+    "Пусик",
+    "Багира",
+    "Луна",
+    "Кеша",
+    "Зефир",
+    "Боня",
+    "Тиша",
+    "Снежинка",
+    "Котяра"
+  ];
 
-  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-  const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-
-  return prefix + suffix;
+  const randomIndex = Math.floor(Math.random() * names.length);
+  return names[randomIndex]
 }
