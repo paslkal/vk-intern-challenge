@@ -5,7 +5,7 @@ header {
 }
 
 nav {
-  background-color: rgba(33, 150, 243, 1);
+  background-color: rgb(33, 150, 243);
   overflow: hidden;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.24);
   padding-left: 100px;
@@ -30,7 +30,7 @@ nav a:hover {
 
 a.active {
   background-color: rgba(30, 136, 229, 1);
-  color: rgba(255, 255, 255, 1);
+  color: white;
 }
 
 a.not-active {
