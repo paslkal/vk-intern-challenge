@@ -12,7 +12,6 @@ import { observer } from "mobx-react-lite"
 const Cats = observer(() => {
   const [currentPage, setCurrentPage] = useState(1)
   const [fetching, setFetching] = useState(true)
-  // const [totalCount, setTotalCount] = useState(1000)
   const {ref, inView} = useInView({
     threshold: 0
   })
@@ -45,8 +44,6 @@ const Cats = observer(() => {
         })
         catsStore.addCats(newCats)        
         setCurrentPage(c => c + 1)
-        // const paginationCount = Number(response.headers.get('Pagination-Count'))
-        // paginationCount && setTotalCount(paginationCount)
       } catch (error) {
         console.error(error)
       } finally {
