@@ -64,18 +64,33 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
         "
         loading="lazy"
       /> :
-      <div style={{color: 'blue', width: 225, height: 225}}></div>
+      <div className="h-56 w-56 bg-sky"></div>
     }
     {
       cat.isEdit ?
-      <div style={{display: "flex"}}>
+      <div className="flex justify-between flex-row">
         <input 
-          type="text" 
+          className="
+            form-control 
+            border-black  
+            border-solid 
+            border-2 
+            rounded-lg 
+            focus:outline-none 
+            placeholder:text-grey-800
+          "
+          type="text"
+          placeholder="Кличка..." 
           onKeyDown={(e) => handleNameEnter(e, cat.id)}
           onChange={(e) => changeName(e, cat.id)}
           value={catNamesStore.catNames[cat.id] || ''}
         />
-        <button onClick={() => handleNameClick(cat.id)}>Поменять</button>
+        <button
+          className="" 
+          onClick={() => handleNameClick(cat.id)}
+        >
+            Поменять
+        </button>
       </div> :
       <>
         <p>{cat.name}</p>
