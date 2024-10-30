@@ -41,7 +41,14 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
 
   return(
     <div 
-    className="cat-container" 
+    className="
+      h-56
+      w-56
+      relative
+      cursor-pointer
+      transition-shadow
+      hover:shadow-2xl
+    " 
     key={cat.id}
     ref={ref} 
   >
@@ -50,7 +57,12 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
       <img 
         src={cat.url} 
         alt="cat" 
-        className="cat-image"
+        className="
+          w-full
+          h-full
+          object-cover
+        "
+        loading="lazy"
       /> :
       <div style={{color: 'blue', width: 225, height: 225}}></div>
     }
@@ -67,7 +79,13 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
       </div> :
       <>
         <p>{cat.name}</p>
-        <div className="cat-container-bottom">
+        <div 
+          className="
+            flex
+            flex-row
+            justify-between
+          "
+        >
           <button onClick={() => handleEdit(cat.id)}>Поменять кличку</button>
           <button onClick={() => handleDelete(cat.id)}>Удалить</button>
         </div>

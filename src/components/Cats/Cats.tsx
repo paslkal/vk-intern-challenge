@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import './Cats.css'
 import FetchedCat from "../../interfaces/FetchedCat.interface"
 import { catAPIUrl } from "../../utils/url"
 import NewCat from "../../interfaces/NewCat.interface"
@@ -55,8 +54,19 @@ const Cats = observer(() => {
   }, [fetching])
   
   return (
-    <main>
-      <div className="cats-grid">
+    <main className="mt-12 mx-7">
+      <div 
+        className="
+          grid 
+          gap-12
+          grid-cols-1
+          2xl:grid-cols-6
+          xl:grid-cols-5
+          lg:grid-cols-4
+          md:grid-cols-3
+          sm:grid-cols-2
+        "
+      >
         {
           catsStore.cats.map((cat, index) => 
             catsStore.cats.length === index + 1 ? 
