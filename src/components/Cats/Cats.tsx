@@ -20,7 +20,6 @@ const Cats = observer(() => {
 
   const isLoaded = loadedCatsStore.numberOfLoadedCats === catsStore.cats.length
 
-
   useEffect(() => {
     if (inView && isLoaded) 
       setFetching(true)
@@ -119,7 +118,7 @@ const Cats = observer(() => {
       >
         {
           catsStore.cats.map((cat, index) => 
-            catsStore.cats.length - 7 === index + 1 ? 
+            catsStore.cats.length === index + 1 ? 
             <div ref={ref} key={index}><Cat cat={cat} index={index}/></div> :
             <Cat cat={cat} key={index} index={index}/>
           )
