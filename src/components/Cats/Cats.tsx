@@ -28,7 +28,7 @@ const Cats = observer(() => {
       try {
 
         const url = `
-          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png&order=${order.toLocaleUpperCase()}${breed ? `&breed_ids=${breed}` : ''}  
+          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png&order=${order.toUpperCase()}${breed ? `&breed_ids=${breed}` : ''}  
         `
         
         const response = await fetch(url)
