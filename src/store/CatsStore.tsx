@@ -9,8 +9,12 @@ class CatsStore {
   cats: NewCat[] = []
 
   addCats(cats: NewCat[]) {
-    const newCats = [...this.cats, ...cats] 
-    
+    const uniqueCats = cats.filter(
+      newCat => !this.cats.some(existingCat => existingCat.id === newCat.id)
+    );
+
+    const newCats = [...this.cats, ...uniqueCats] 
+
     this.cats = newCats 
   }
 

@@ -5,21 +5,18 @@ class LoadedCatsStore {
     makeAutoObservable(this)
   }
 
-  loadedCats: {[key: string]: number} = {}
+  loadedCats: {[catId: string]: boolean} = {}
 
   get numberOfLoadedCats() {
-    return Object.values(this.loadedCats)
-      .reduce((partialSum, value) => partialSum + value, 0)
+    return Object.values(this.loadedCats).length
   }
 
-  addLoadedCat(key: string) {
-    if (!this.loadedCats[key])
-      this.loadedCats[key] = 1
-    else this.loadedCats[key]++
+  addLoadedCat(catId: string) {
+    this.loadedCats[catId] = true
   }
 
-  deleteLoadedCat(key: string) {
-    this.loadedCats[key]--
+  deleteLoadedCat(catId: string) {
+    delete this.loadedCats[catId]
   }
 
   deleteAllLoadedCats() {

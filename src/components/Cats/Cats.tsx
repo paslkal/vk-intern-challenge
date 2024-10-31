@@ -20,6 +20,7 @@ const Cats = observer(() => {
 
   const isLoaded = loadedCatsStore.numberOfLoadedCats === catsStore.cats.length
 
+
   useEffect(() => {
     if (inView && isLoaded) 
       setFetching(true)
@@ -34,11 +35,11 @@ const Cats = observer(() => {
         const url = `
           ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png&order=${order.toUpperCase()}${breed ? `&breed_ids=${breed}` : ''}  
         `
-        
+    
+
         const response = await fetch(url)
         
         const fetchedCats: FetchedCat[] = await response.json()
-        
         const newCats: NewCat[] = fetchedCats.map((cat) => {
           const newCat = {
             ...cat,
@@ -51,7 +52,7 @@ const Cats = observer(() => {
         catsStore.addCats(newCats)        
         setCurrentPage(c => c + 1)
       } catch (error) {
-        console.error(error)
+        console.log(error)
       } finally {
         setFetching(false)
       }
@@ -62,6 +63,7 @@ const Cats = observer(() => {
   
   const handleBreed = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setBreed(e.target.value)
+    setCurrentPage(1)
     catsStore.deleteAllCats()
     loadedCatsStore.deleteAllLoadedCats()
     setFetching(true)
@@ -69,6 +71,7 @@ const Cats = observer(() => {
 
   const handleOrder = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOrder(e.target.value)
+    setCurrentPage(1)
     catsStore.deleteAllCats()
     loadedCatsStore.deleteAllLoadedCats()
     setFetching(true)
