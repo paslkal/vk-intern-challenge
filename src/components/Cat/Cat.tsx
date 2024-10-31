@@ -5,7 +5,7 @@ import catNamesStore from "../../store/CatNamesStore"
 import { observer } from "mobx-react-lite"
 import loadedCatsStore from "../../store/LoadedCatsStore"
 
-const Cat = observer(({cat} : {cat: NewCat}) => {
+const Cat = observer(({cat, index} : {cat: NewCat, index: number}) => {
   const {ref, inView} = useInView({
     threshold: 0.5,
     triggerOnce: true
@@ -38,7 +38,10 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
   };
 
 
-  const handleDelete = (catId: string) => catsStore.deleteCat(catId)
+  const handleDelete = (catId: string) => {
+    catsStore.deleteCat(catId)
+    loadedCatsStore.deleteLoadedCat(catId)
+  }
 
   return(
     <div 
@@ -50,7 +53,7 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
       transition-shadow
       hover:shadow-2xl
     " 
-    key={cat.id}
+    key={index}
     ref={ref} 
   >
     {
@@ -64,7 +67,7 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
           object-cover
         "
         loading="lazy"
-        onLoad={() => loadedCatsStore.addLoadedCat()}
+        onLoad={() => loadedCatsStore.addLoadedCat(cat.id)}
       /> :
       <div className="h-56 w-56 bg-sky"></div>
     }

@@ -18,10 +18,12 @@ const Cats = observer(() => {
   })
   const [order, setOrder] = useState('rand')
 
+  const isLoaded = loadedCatsStore.numberOfLoadedCats === catsStore.cats.length
+
   useEffect(() => {
-    if (inView && loadedCatsStore.loadedCats === catsStore.cats.length) 
+    if (inView && isLoaded) 
       setFetching(true)
-  }, [inView, loadedCatsStore.loadedCats])
+  }, [inView, isLoaded])
   
   useEffect(() => {
     if (!fetching) return
@@ -61,13 +63,14 @@ const Cats = observer(() => {
   const handleBreed = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setBreed(e.target.value)
     catsStore.deleteAllCats()
+    loadedCatsStore.deleteAllLoadedCats()
     setFetching(true)
   }
 
   const handleOrder = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOrder(e.target.value)
-    console.log(e.target.value)
     catsStore.deleteAllCats()
+    loadedCatsStore.deleteAllLoadedCats()
     setFetching(true)
   }
 
@@ -113,16 +116,18 @@ const Cats = observer(() => {
       >
         {
           catsStore.cats.map((cat, index) => 
-            catsStore.cats.length === index + 1 ? 
-            <div ref={ref}><Cat cat={cat}/></div> :
-            <Cat cat={cat}/>
+            catsStore.cats.length - 7 === index + 1 ? 
+            <div ref={ref} key={index}><Cat cat={cat} index={index}/></div> :
+            <Cat cat={cat} key={index} index={index}/>
           )
         }
       </div>
 
       {
-        loadedCatsStore.loadedCats !== catsStore.cats.length &&
-        <p className="max-w-fit ml-auto mr-auto mt-14 font-bold">Загрузка...</p> 
+        !isLoaded && !fetching && 
+        <p className="max-w-fit ml-auto mr-auto mt-14 font-bold">
+          Загрузка...
+        </p> 
       }
     </main>
   )
