@@ -39,6 +39,10 @@ class CatsStore {
 
     this.cats = newCats
   }
+
+  deleteAllCats() {
+    this.cats = []
+  }
 }
 
 export default new CatsStore()  

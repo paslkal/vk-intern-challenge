@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import FetchedCat from "../../interfaces/FetchedCat.interface"
 import { catAPIUrl } from "../../utils/url"
 import NewCat from "../../interfaces/NewCat.interface"
@@ -11,6 +11,7 @@ import { observer } from "mobx-react-lite"
 const Cats = observer(() => {
   const [currentPage, setCurrentPage] = useState(1)
   const [fetching, setFetching] = useState(true)
+  const [breed, setBreed] = useState('')
   const {ref, inView} = useInView({
     threshold: 0
   })
@@ -25,9 +26,11 @@ const Cats = observer(() => {
     const fetchData = async () => {
       try {
 
-        const response = await fetch(`
-          ${catAPIUrl}/search?limit=10&page=${currentPage}  
-        `)
+        const url = `
+          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png${breed ? `&breed_ids=${breed}` : ''}  
+        `
+        
+        const response = await fetch(url)
         
         const fetchedCats: FetchedCat[] = await response.json()
         
@@ -52,8 +55,27 @@ const Cats = observer(() => {
     fetchData()
   }, [fetching])
   
+  const handleSelectValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setBreed(e.target.value)
+    catsStore.deleteAllCats()
+    setFetching(true)
+  }
+
   return (
     <main className="mt-12 mx-7">
+      <label htmlFor="breed">Порода:</label>
+      <select value={breed} onChange={handleSelectValue}>
+        <option value="" selected>выбрать породу</option>
+        <option value="beng">бенгальский</option>
+        <option value="abys">абиссинский</option>
+        <option value="aege">эгейский</option>
+        <option value="asho">амереканский короткошёрстный</option>
+        <option value="awir">амереканский жесткошёрстный</option>
+        <option value="bsho">британский короткошёрстный</option>
+        <option value="bslo">британский длинношёрстный</option>
+      </select>
+
+      
       <div 
         className="
           grid 
