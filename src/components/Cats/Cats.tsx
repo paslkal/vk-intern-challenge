@@ -15,6 +15,7 @@ const Cats = observer(() => {
   const {ref, inView} = useInView({
     threshold: 0
   })
+  const [order, setOrder] = useState('rand')
 
   useEffect(() => {
     if (inView) setFetching(true)
@@ -27,7 +28,7 @@ const Cats = observer(() => {
       try {
 
         const url = `
-          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png${breed ? `&breed_ids=${breed}` : ''}  
+          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png&order=${order.toLocaleUpperCase()}${breed ? `&breed_ids=${breed}` : ''}  
         `
         
         const response = await fetch(url)
@@ -55,16 +56,36 @@ const Cats = observer(() => {
     fetchData()
   }, [fetching])
   
-  const handleSelectValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleBreed = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setBreed(e.target.value)
+    catsStore.deleteAllCats()
+    setFetching(true)
+  }
+
+  const handleOrder = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setOrder(e.target.value)
+    console.log(e.target.value)
     catsStore.deleteAllCats()
     setFetching(true)
   }
 
   return (
     <main className="mt-12 mx-7">
-      <label htmlFor="breed">Порода:</label>
-      <select value={breed} onChange={handleSelectValue}>
+      <label htmlFor="sort" className="font-bold">
+        Сортировка по дате публикации:
+      </label>
+      <select value={order} onChange={handleOrder}>
+        <option value="random" selected>случайным образом</option>
+        <option value="asc">самые поздние публикации</option>
+        <option value="desc">самые ранние публикации</option>
+      </select>
+
+      <br />
+
+      <label htmlFor="breed" className="font-bold">
+        Порода:
+      </label>
+      <select value={breed} onChange={handleBreed}>
         <option value="" selected>выбрать породу</option>
         <option value="beng">бенгальский</option>
         <option value="abys">абиссинский</option>
