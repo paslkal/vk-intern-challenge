@@ -3,6 +3,7 @@ import { useInView } from "react-intersection-observer"
 import catsStore from "../../store/CatsStore"
 import catNamesStore from "../../store/CatNamesStore"
 import { observer } from "mobx-react-lite"
+import loadedCatsStore from "../../store/LoadedCatsStore"
 
 const Cat = observer(({cat} : {cat: NewCat}) => {
   const {ref, inView} = useInView({
@@ -63,6 +64,7 @@ const Cat = observer(({cat} : {cat: NewCat}) => {
           object-cover
         "
         loading="lazy"
+        onLoad={() => loadedCatsStore.addLoadedCat()}
       /> :
       <div className="h-56 w-56 bg-sky"></div>
     }

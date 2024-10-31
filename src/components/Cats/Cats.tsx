@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer"
 import Cat from "../Cat/Cat"
 import catsStore from "../../store/CatsStore"
 import { observer } from "mobx-react-lite"
+import loadedCatsStore from "../../store/LoadedCatsStore"
 
 const Cats = observer(() => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -18,9 +19,10 @@ const Cats = observer(() => {
   const [order, setOrder] = useState('rand')
 
   useEffect(() => {
-    if (inView) setFetching(true)
-  }, [inView])
-
+    if (inView && loadedCatsStore.loadedCats === catsStore.cats.length) 
+      setFetching(true)
+  }, [inView, loadedCatsStore.loadedCats])
+  
   useEffect(() => {
     if (!fetching) return
     
@@ -28,7 +30,7 @@ const Cats = observer(() => {
       try {
 
         const url = `
-          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png&order=${order.toUpperCase()}${breed ? `&breed_ids=${breed}` : ''}  
+          ${catAPIUrl}/search?limit=10&page=${currentPage}&has_breeds=true&mime_type=jpg,png,gif&order=${order.toUpperCase()}${breed ? `&breed_ids=${breed}` : ''}  
         `
         
         const response = await fetch(url)
@@ -117,6 +119,11 @@ const Cats = observer(() => {
           )
         }
       </div>
+
+      {
+        loadedCatsStore.loadedCats !== catsStore.cats.length &&
+        <p className="max-w-fit ml-auto mr-auto mt-14 font-bold">Загрузка...</p> 
+      }
     </main>
   )
 })
