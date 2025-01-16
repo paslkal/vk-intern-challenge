@@ -1,17 +1,15 @@
-import React from "react"
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import currentTabStore from "../../store/CurrentTabStore"
+import { observer } from "mobx-react-lite"
 
-export default function Header() {
-  const [currentTab, setCurrentTab] = useState('all-cats')
-
+const Header = observer(() => {
   return (
     <header>
       <nav className='bg-blue-400 overflow-hidden pl-24 shadow-2xl'>
         <Link 
           to=''
           className={
-           `bg-blue-${currentTab === 'all-cats' ? 500 : 400} 
+           `bg-blue-${currentTabStore.currentTab === 'all-cats' ? 500 : 400} 
             text-white 
             hover:bg-blue-700 
             font-roboto
@@ -26,14 +24,14 @@ export default function Header() {
             px-5
           `}
           
-          onClick={() => setCurrentTab('all-cats')}
+          onClick={() => currentTabStore.changeCurrentTab('all-cats')}
         >
           Все котики
         </Link>        
         <Link 
           to=''
           className={`
-            bg-blue-${currentTab === 'liked-cats' ? 500 : 400} 
+            bg-blue-${currentTabStore.currentTab === 'liked-cats' ? 500 : 400} 
             text-slate-300 
             hover:bg-blue-700 
             font-roboto
@@ -48,11 +46,13 @@ export default function Header() {
             px-5
             
           `}
-          onClick={() => setCurrentTab('liked-cats')}
+          onClick={() => currentTabStore.changeCurrentTab('liked-cats')}
         >
           Любимые котики
         </Link>        
       </nav>
     </header>
   )
-}
+})
+
+export default Header
