@@ -4,12 +4,20 @@ import catsStore from "../../store/CatsStore"
 import catNamesStore from "../../store/CatNamesStore"
 import { observer } from "mobx-react-lite"
 import loadedCatsStore from "../../store/LoadedCatsStore"
+import hoveredBlock from '../../img/heart/hovered-block.png'
+import hoveredHeart from '../../img/heart/hovored-heart.png'
+import ClickedHeart from '../../img/heart/clicked-heart.png'
+import { useState } from "react"
 
 const Cat = observer(({cat, index} : {cat: NewCat, index: number}) => {
   const {ref, inView} = useInView({
     threshold: 0.5,
     triggerOnce: true
   })
+
+  // const [currentHeart, setCurrentHeart] = useState('')
+
+  const [isHover, setIsHover] = useState(false)
 
   const handleEdit = (catId: string) => catsStore.editCats(catId)
 
@@ -58,17 +66,33 @@ const Cat = observer(({cat, index} : {cat: NewCat, index: number}) => {
   >
     {
       inView ?
-      <img 
-        src={cat.url} 
-        alt="cat" 
-        className="
-          w-full
-          h-full
-          object-cover
-        "
-        loading="lazy"
-        onLoad={() => loadedCatsStore.addLoadedCat(cat.id)}
-      /> :
+      <div className="
+        w-full
+        h-full
+        object-cover
+        relative
+      ">
+        <img 
+          src={cat.url} 
+          alt="cat" 
+          className="
+            w-full
+            h-full
+            object-cover
+          "
+          loading="lazy"
+          onLoad={() => loadedCatsStore.addLoadedCat(cat.id)}
+        />
+          <img  
+            src={isHover ? hoveredHeart : (cat.isLiked ? ClickedHeart : hoveredBlock)} 
+            alt="heart"
+            className="absolute right-0 bottom-2"
+            onMouseOver={() => setIsHover(true)}
+            onMouseOut={() => setIsHover(false)}
+            onClick={() => catsStore.likeCat(cat.id)}
+          />
+      </div>
+       :
       <div className="h-56 w-56 bg-sky"></div>
     }
     {

@@ -42,7 +42,8 @@ const Cats = observer(() => {
           const newCat = {
             ...cat,
             name: generateCatName(), 
-            isEdit: false
+            isEdit: false,
+            isLiked: false
           }
           
           return newCat

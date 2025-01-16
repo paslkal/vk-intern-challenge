@@ -28,6 +28,16 @@ class CatsStore {
     this.cats = newCats
   }
 
+  likeCat(catId: string) {
+    const newCats = this.cats.map(cat => 
+      cat.id !== catId ? 
+      cat :
+      {...cat, isLiked: !cat.isLiked}
+    )
+
+    this.cats = newCats
+  }
+
   changeName(catId: string, name: string) {
     const newCats = this.cats.map(cat => 
       cat.id !== catId ?
