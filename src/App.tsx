@@ -8,8 +8,8 @@ function App() {
       <Router basename="/">
         <Header/>
         <Routes>
-          <Route path="/" element={<Cats/>}/>
-          <Route path="*" element={<Navigate to='/' replace/>}/>
+          <Route path="vk-intern-challenge" element={<Cats/>}/>
+          <Route path="*" element={<Navigate to='/vk-intern-challenge' replace/>}/>
         </Routes>
       </Router>
     </>
