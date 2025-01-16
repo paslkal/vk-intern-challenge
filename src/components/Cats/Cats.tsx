@@ -8,6 +8,7 @@ import Cat from "../Cat/Cat"
 import catsStore from "../../store/CatsStore"
 import { observer } from "mobx-react-lite"
 import loadedCatsStore from "../../store/LoadedCatsStore"
+import currentTabStore from "../../store/CurrentTabStore"
 
 const Cats = observer(() => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -19,6 +20,11 @@ const Cats = observer(() => {
   const [order, setOrder] = useState('rand')
 
   const isLoaded = loadedCatsStore.numberOfLoadedCats === catsStore.cats.length
+
+  const currentCats = 
+    currentTabStore.currentTab === 'all-cats' ? 
+    catsStore.cats : 
+    catsStore.getLikedCats()
 
   useEffect(() => {
     if (inView && isLoaded) 
@@ -117,7 +123,7 @@ const Cats = observer(() => {
         "
       >
         {
-          catsStore.cats.map((cat, index) => 
+          currentCats.map((cat, index) => 
             catsStore.cats.length === index + 1 ? 
             <div ref={ref} key={index}><Cat cat={cat} index={index}/></div> :
             <Cat cat={cat} key={index} index={index}/>
@@ -126,7 +132,7 @@ const Cats = observer(() => {
       </div>
 
       {
-        !isLoaded && !fetching && 
+        !isLoaded && !fetching && currentTabStore.currentTab === 'all-cats' && 
         <p className="max-w-fit ml-auto mr-auto mt-14 font-bold">
           Загрузка...
         </p> 

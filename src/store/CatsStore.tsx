@@ -8,6 +8,10 @@ class CatsStore {
 
   cats: NewCat[] = []
 
+  getLikedCats() {
+    return this.cats.filter(cat => cat.isLiked)
+  }
+  
   addCats(cats: NewCat[]) {
     const uniqueCats = cats.filter(
       newCat => !this.cats.some(existingCat => existingCat.id === newCat.id)
